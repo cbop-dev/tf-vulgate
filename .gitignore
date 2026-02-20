@@ -1,0 +1,20 @@
+# Text-Fabric Cache and Binaries
+# (The user may want to track the tf/ folder or ignore it, usually people commit it)
+# We will NOT ignore tf/ so it can be published!
+
+# Python Script Caches
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Raw data XMLs (Ignored to save repo space)
+data/xml/*.xml
+
+# Local zip builds
+*.zip
+
+data/
