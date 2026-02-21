@@ -87,6 +87,10 @@ def director(cv):
         verse=None,
     )
     
+    prev_slot = None
+    prev_punc = " "
+    pending_prefix = ""
+    
     for xml_file in xml_files:
         print(f"Processing {os.path.basename(xml_file)}...")
         tree = ET.parse(xml_file)
@@ -151,14 +155,25 @@ def director(cv):
                     pos = w.get('pos', '')
                     morph = w.get('msd', '')
                     
+                    if pos == 'PUNC':
+                        if text in ['[', '(', '{', '<']:
+                            pending_prefix += text
+                        else:
+                            if prev_slot is not None:
+                                prev_punc = prev_punc.rstrip() + text + " "
+                                cv.feature(prev_slot, punc=prev_punc)
+                        continue
+
+                    # Prep text with any pending prefixes
+                    text = pending_prefix + text
+                    pending_prefix = ""
+                    
                     # Create slot
                     slot = cv.slot()
+                    prev_slot = slot
+                    prev_punc = " "
                     
-                    # For punctuation: since XML often drops punctuation or doesn't explicitly mark spaces between words,
-                    # We will append a generic space to every word's punc field for now.
-                    # If there's specific punctuation rendering needed, we would parse it.
-                    # Looking at the sample, XML stripped most punctuation.
-                    cv.feature(slot, text=text, punc=" ", lemma=lemma, pos=pos, morph=morph)
+                    cv.feature(slot, text=text, punc=prev_punc, lemma=lemma, pos=pos, morph=morph)
 
                 cv.terminate(cur['verse'])
                 cur['verse'] = None

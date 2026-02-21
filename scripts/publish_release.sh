@@ -9,16 +9,23 @@ ORG="cbop-dev"
 REPO="tf-vulgate"
 DATA_DIR="tf"
 VERSION="0.1"
-TAG="v$VERSION.1"
+TAG="v$VERSION.2"
 
 echo "=========================================="
 echo " Packaging Text-Fabric Dataset for Release"
 echo "=========================================="
 
-# 1. Activate the python virtual environment where text-fabric is installed
-# Ensure you activate your text-fabric virtual environment before running this script, or uncomment and set this path:
-# source path/to/.venv/bin/activate
+# 0. Recommend to call this from the repo root: "bash scripts/publish_release.sh"
 
+# 1. Activate the python virtual environment where text-fabric is installed, then ensure the TF dataset is loaded on your pc.
+# Ensure you have setup a python venv and installed text-fabric[github]:
+# python -m venv .ven
+# . .venv/bin/activate
+# pip install text-fabric[github]
+# Now, at this time, activate your text-fabric virtual environment before running this script, or edit and uncomment and set this path:
+# source path/to/.venv/bin/activate 
+# . .venv/bin/activate
+python -c "import os; from tf.app import use; A=use('$ORG/$REPO', version='$VERSION',silent='deep')" 
 # 2. Use the official tf-zip tool to safely package the archive with the exact directory structure TF expects.
 # It reads from ~/github/$ORG/$REPO/$DATA_DIR/$VERSION and outputs to ~/Downloads/github/$ORG-release/$REPO/
 echo "> Running tf-zip..."
